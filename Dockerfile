@@ -19,6 +19,8 @@ COPY server.js /app/
 COPY probe.js /app/
 COPY constants.js /app/
 COPY notification.js /app/
+COPY telegram_notifier.js /app/
+COPY teams_notifier.js /app/
 COPY database.js /app/
 COPY api.js /app/
 COPY app.js /app/

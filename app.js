@@ -16,6 +16,12 @@ const api = require('./api.js');
 const validate = require('express-jsonschema').validate;
 const constants = require('./constants.js');
 
+// Initiate telegram
+const telegram_notifier = require('./telegram_notifier.js');
+// Initiate teams
+const teams_notifier = require('./teams_notifier.js');
+
+
 function set_secure_headers(req, res) {
 	res.set("X-XSS-Protection", "mode=block");
 	res.set("X-Content-Type-Options", "nosniff");
@@ -76,6 +82,12 @@ async function get_app_server() {
     	set_secure_headers(req, res);
     	next();
     });
+
+	// Set Telegram Webhook path with path set in env
+	if(process.env.TELEGRAM_BOT_NOTIFICATIONS_ENABLED === "true"){
+		app.use(telegram_notifier.bot.webhookCallback(process.env.WEBHOOK_PATH));
+		console.log("Setup web hook path");
+	}
 
     // Handler for HTML pages collected by payloads
     const CollectedPagesCallbackSchema = {
@@ -238,6 +250,20 @@ async function get_app_server() {
 			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
 			await notification.send_email_notification(payload_fire_data);
 		}
+		// Send Telegram Notifictaion
+		if(process.env.TELEGRAM_BOT_NOTIFICATIONS_ENABLED === "true"){
+			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+			await telegram_notifier.send_telegram_notification(payload_fire_data);
+			// telegram_notifier.bot.telegram.sendMessage(chat.id,'XSS Fired');
+		}
+
+		if(process.env.TEAMS_NOTIFICATIONS_ENABLED === "true"){
+			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+			await teams_notifier.send_teams_notification(payload_fire_data);
+			// telegram_notifier.bot.telegram.sendMessage(chat.id,'XSS Fired');
+		}
+
+
 	});
 
 	app.get('/screenshots/:screenshotFilename', async (req, res) => {

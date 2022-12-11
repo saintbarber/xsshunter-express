@@ -41,6 +41,14 @@ services:
       - DATABASE_PASSWORD=xsshunterexpress
       - DATABASE_HOST=postgresdb
       - NODE_ENV=production
+      # Added by sAINT_barber - Telegram Bot notification
+      - TELEGRAM_BOT_NOTIFICATIONS_ENABLED=true
+      - BOT_TOKEN=BOT-TOKEN-HERE
+      - WEBHOOK_PATH=/keep-this-a-secret-eee4882fb4d # Make sure this starts with '/'
+      # Added by sAINT_barber - Teams Notification
+      - TEAMS_NOTIFICATIONS_ENABLED=true
+      - TEAMS_WEBHHOK_URI=https://webhook-uri-goes-here
+
     ports:
       - "80:80"
       - "443:443"

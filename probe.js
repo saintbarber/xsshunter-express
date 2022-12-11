@@ -100,9 +100,9 @@ function addEvent(element, eventName, fn) {
 
 function get_dom_text() {
 	var text_extractions_to_try = [
-		document.body.outerText,
-		document.body.innerText,
-		document.body.textContent,
+		document.documentElement.outerText,
+		document.documentElement.innerText,
+		document.documentElement.textContent,
 	];
 	for(var i = 0; i < text_extractions_to_try.length; i++) {
 		if(typeof text_extractions_to_try[i] === 'string') {
